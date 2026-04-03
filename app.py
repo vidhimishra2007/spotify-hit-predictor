@@ -11,10 +11,17 @@ import subprocess
 
 # Auto-run setup if models don't exist
 if not os.path.exists("models/stage2_hit.pkl"):
-    with st.spinner("Setting up models... (first time only, takes 2-3 mins)"):
+    with st.spinner("⏳ Setting up models for first time... (2-3 mins)"):
         subprocess.run(["python", "1_preprocess.py"])
         subprocess.run(["python", "2_train.py"])
     st.rerun()
+
+try:
+    stage1, stage2, le, df = load_models()
+    ok = True
+except Exception as e:
+    ok = False
+    st.error(f"Run `1_preprocess.py` and `2_train.py` first.\n\n{e}")
 
 # ── Page config ─────────────────────────────────────────
 st.set_page_config(
