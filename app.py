@@ -9,20 +9,6 @@ import joblib
 import os
 import subprocess
 
-# Auto-run setup if models don't exist
-if not os.path.exists("models/stage2_hit.pkl"):
-    with st.spinner("⏳ Setting up models for first time... (2-3 mins)"):
-        subprocess.run(["python", "1_preprocess.py"])
-        subprocess.run(["python", "2_train.py"])
-    st.rerun()
-
-try:
-    stage1, stage2, le, df = load_models()
-    ok = True
-except Exception as e:
-    ok = False
-    st.error(f"Run `1_preprocess.py` and `2_train.py` first.\n\n{e}")
-
 # ── Page config ─────────────────────────────────────────
 st.set_page_config(
     page_title="Hit Predictor",
@@ -295,8 +281,7 @@ with col_right:
     """, unsafe_allow_html=True)
 
     genre_df = df[df["playlist_genre"] == g_name].copy()
-    # feat_arr = genre_df[AUDIO_FEATURES].values
-    feat_arr = engineer_features(genre_df[AUDIO_FEATURES]).values
+    feat_arr = genre_df[AUDIO_FEATURES].values
     from sklearn.preprocessing import MinMaxScaler
     sc_sim = MinMaxScaler()
     normed = sc_sim.fit_transform(np.vstack([feat_arr, features[0]]))
