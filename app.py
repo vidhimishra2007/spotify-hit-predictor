@@ -6,6 +6,15 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import joblib
+import os
+import subprocess
+
+# Auto-run setup if models don't exist
+if not os.path.exists("models/stage2_hit.pkl"):
+    with st.spinner("Setting up models... (first time only, takes 2-3 mins)"):
+        subprocess.run(["python", "1_preprocess.py"])
+        subprocess.run(["python", "2_train.py"])
+    st.rerun()
 
 # ── Page config ─────────────────────────────────────────
 st.set_page_config(
